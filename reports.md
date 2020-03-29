@@ -121,3 +121,65 @@ There are two test endpoints, that return error so you can test client side
 error handling: [Error 400](https://www.toggl.com/reports/api/v2/error400) and 
 [Error 500](https://www.toggl.com/reports/api/v2/error500) both of them set 
 Warning header to test value.
+
+
+
+# Summary report
+
+Summary report returns the aggregated time entries data.
+
+## Request
+
+In addition to the [standard request parameters](../reports.md#request-parameters), summaries accept the following additional parameters:
+* `grouping`
+* `subgrouping`
+* `subgrouping_ids` (boolean) - whether returned items will contain 'ids' key containing comma separated group item ID values
+* `grouped_time_entry_ids` (boolean) - whether returned items will contain 'time_entry_ids' key containing comma separated time entries ID values for given item
+
+Use the grouping and subgrouping params to organize the data as needed. By default `grouping:projects` and `subgrouping:time_entries`
+
+Following groupings with subgroupings are available in the summary report
+* projects
+  * time_entries
+  * tasks
+  * users
+* clients
+  * time_entries
+  * tasks
+  * projects
+  * users
+* users
+  * time_entries
+  * tasks
+  * projects
+  * clients
+  
+  
+ 
+ # Weekly report
+
+The weekly report gives aggregated 7 day durations or earnings grouped by users and projects.
+
+## Request
+
+The weekly report accepts all of the [standard request parameters](../reports.md#request-parameters), with the exception of the `until` parameter.  Instead, 7 days starting from `since` are shown.
+
+Additional request parameters for this report are:
+* `grouping`: `users`/`projects`, default projects. If one grouping is selected, the other acts as subgrouping.
+* `calculate`: `time`/`earnings`, default time
+
+
+# Detailed report
+
+The detailed report returns the time entries for the requested parameters/filters.
+
+## Request
+
+In addition to the [standard request parameters](../reports.md#request-parameters), there is one additional parameter in detailed reports. As the returned data is paginated you have to add the page parameter.
+* `page`: integer, default 1
+
+## Response
+
+The response will include the [standard response parameters](../reports.md#successful-response), as well as:
+* `total_count`: total number of time entries that were found for the request. Pay attention to the fact that the amount of time entries returned is max the number which is returned with the `per_page` field (currently 50). To get the next batch of time entries you need to do a new request with same parameters and the incremented `page` parameter. It is not possible to get all the time entries with one request.
+* `per_page`: how many time entries are displayed in one request
